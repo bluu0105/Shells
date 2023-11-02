@@ -3,7 +3,13 @@ The goal is for this to be a multipurpose bot for Paints & Shells (UMD Art Club)
 * Nothing
 
 Open for anyone to contribute to.
-
+## Setup Python venv
+For mac:
+```
+$ python -m venv venv
+$ source venv/bin/activate
+$ pip install -r requirements.txt
+```
 ## Running locally
 1. You'll need to create a discord bot at ttps://discord.com/developers/applications
 2. Create a .env file, with `DISCORD_TOKEN={your token}`
