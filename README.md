@@ -39,5 +39,8 @@ Turn on all 3 Presence Intents.
 ## Database Schema
 Designed around a single server.
 "Points" -> "User" : their points
-"Attacks-Made" -> user_id -> idk yet
+"Attacks-Made" -> user_id -> 
+    {time, 
+    id of discord message of the attack drawing,
+    }
 "Attacks-Recieved" -> user_id -> idk yet
