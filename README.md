@@ -10,8 +10,15 @@ $ python -m venv venv
 $ source venv/bin/activate
 $ pip install -r requirements.txt
 ```
+
+For windows:
+```
+$ python -m venv venv
+$ venv/Scripts/activate
+$ pip install -r requirements.txt
+```
 ## Running locally
-1. You'll need to create a discord bot at ttps://discord.com/developers/applications
+1. You'll need to create a discord bot at https://discord.com/developers/applications
 2. Create a .env file, with `DISCORD_TOKEN={your token}`
 
 #### Turning on Presence Intents

@@ -16,6 +16,7 @@ class SetUpCog(commands.Cog):
     """
     @commands.command(name='boop')
     async def send_message(self, ctx):
+        print("booped")
         database_ref = db.reference("/")
         now = datetime.now()
         current_time = now.strftime("%H:%M:%S")
