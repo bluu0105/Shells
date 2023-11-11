@@ -12,11 +12,13 @@ from firebase_admin import db
 # Discord setup
 load_dotenv()
 TOKEN = os.getenv('DISCORD_TOKEN')
+
 intents = discord.Intents.default()
 intents.members = True
 intents.typing = False
 intents.presences = False
 
+# Every cog created must be added here
 all_extensions = [
     "setup",
     "trade.attacks"
@@ -31,7 +33,9 @@ class PSBot(commands.Bot):
     async def setup_hook(self):
         await firebase_setup()
         for extension in all_extensions:
-            self.load_extension(extension)
+            await self.load_extension(extension)
+        # self.load_extension("setup")
+        
 
     async def on_ready(self):
         await self.change_presence(activity=discord.Game('with your mom'))
