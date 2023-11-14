@@ -4,7 +4,8 @@ from firebase_admin import db
 from datetime import datetime
 
 """
-Commands for bot set up. i.e. configuring the channel to spam messages in.
+Commands for bot set up within a server. i.e. configuring the channel to spam messages in.
+TODO: SetUp commands should only be callable by server admin.
 """
 
 class SetUpCog(commands.Cog):
@@ -12,6 +13,7 @@ class SetUpCog(commands.Cog):
         self.bot = bot
     
     """
+    TODO: Delete this later
     Here, when you type !boop, it'll insert the current time into the database.(lmao)
     """
     @commands.command(name='boop')

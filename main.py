@@ -13,13 +13,15 @@ from firebase_admin import db
 load_dotenv()
 TOKEN = os.getenv('DISCORD_TOKEN')
 intents = discord.Intents.default()
+intents.message_content = True
 intents.members = True
 intents.typing = False
 intents.presences = False
 
 all_extensions = [
     "setup",
-    "trade.attacks"
+    "trade.attacks",
+    "telephone"
 ]
 
 class PSBot(commands.Bot):
