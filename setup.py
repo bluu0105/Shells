@@ -1,7 +1,9 @@
-# import discord
+import discord
 from discord.ext import commands
 from firebase_admin import db
 from datetime import datetime
+
+from pprint import pprint
 
 """
 Commands for bot set up within a server. i.e. configuring the channel to spam messages in.
@@ -12,6 +14,19 @@ class SetUpCog(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
     
+    """
+    Sync command for syncing slash commands.
+    """
+    @commands.command()
+    @commands.is_owner()
+    async def sync(self, ctx):
+        try: 
+            self.bot.tree.copy_global_to(guild=ctx.guild)
+            hi = await self.bot.tree.sync()
+        except discord.HTTPException:
+            pass
+        await ctx.send(hi)
+
     """
     TODO: Delete this later
     Here, when you type !boop, it'll insert the current time into the database.(lmao)

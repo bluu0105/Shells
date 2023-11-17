@@ -34,7 +34,6 @@ class PSBot(commands.Bot):
         await firebase_setup()
         for extension in all_extensions:
             await self.load_extension(extension)
-        # self.load_extension("setup")
 
     async def on_ready(self):
         await self.change_presence(activity=discord.Game('with your mom'))
