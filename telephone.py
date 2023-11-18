@@ -1,9 +1,7 @@
 import discord
 from discord import app_commands
 from discord.ext import commands
-from discord.utils import get
 from firebase_admin import db
-from typing import Optional
 
 """
 Art Telephone
@@ -11,7 +9,6 @@ Art Telephone
 class TelephoneCog(commands.Cog):
 
     class TelephoneView(discord.ui.View): 
-        
         def __init__(self, db_ref):
             super().__init__()
             self.db_ref = db_ref
@@ -27,21 +24,35 @@ class TelephoneCog(commands.Cog):
         super().__init__()
     
     """
-    Starts game if there
+    Test command for views
     """
     @commands.command()
     async def testcommand(self, ctx):
         await ctx.send("This is a button!", view=self.TelephoneView(self.db_ref))
 
-    # @commands.hybrid_command(name="ping") hybrid command example
-    #@app_commands.command(name='game')
-    #@commands.command(name='telephone')
+    """
+    Test command
+    """
     @commands.hybrid_command()
-    async def game(self, ctx: commands.Context, command: Optional[str]):
-        # Makes sure the message has add_reaction method
+    async def test(self, ctx):
+        # Makes sure the message is a default message before adding a reaction
         if ctx.message.type == discord.MessageType.default:
             await ctx.message.add_reaction("👍")
         await ctx.reply('Hello!')
+    
+    """
+    Invites a player to join art telephone via dm.
+    TODO
+    - Shows current queue
+    - Has button with "join"
+    - Shows the inviter
+    """
+    @commands.hybrid_command(
+            brief="Invite someone to join telephone with their username.",
+            description="Invite a user with their discord username to join a telephone game. You must provide a valid username and a game_id."
+    )
+    async def invite(self, ctx, username, game_id):
+        await ctx.reply("This command is under works")
 
 async def setup(bot):
     await bot.add_cog(TelephoneCog(bot))
