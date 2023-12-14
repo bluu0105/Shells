@@ -37,6 +37,8 @@ class PSBot(commands.Bot):
 
     async def on_ready(self):
         await self.change_presence(activity=discord.Game('with your mom'))
+        # uncomment line below when commands need to be synced/ updated, recomment when not needing update.
+        await bot.tree.sync()
 
 async def firebase_setup():
     database_url = os.getenv('FIREBASE_DATABASE_URL')
@@ -44,6 +46,7 @@ async def firebase_setup():
     firebase_admin.initialize_app(cred, {
         "databaseURL": database_url
     })
-        
-PSBot(intents=intents).run(TOKEN)
+    
+bot = PSBot(intents=intents)
+bot.run(TOKEN)
 # :)
