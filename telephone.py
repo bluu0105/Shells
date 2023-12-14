@@ -30,8 +30,8 @@ class TelephoneCog(commands.Cog):
         await ctx.send("This is a button!", view=self.TelephoneView(self.db_ref))
 
     @discord.app_commands.command(name='telephonegame')
-    async def send_message(self, ctx):
-        await ctx.reply('Hello!')
+    async def send_message(self, interaction: discord.Interaction):
+        await interaction.response.send_message('Hello!')
 
 async def setup(bot):
     await bot.add_cog(TelephoneCog(bot))
