@@ -30,9 +30,6 @@ class TelephoneCog(commands.Cog):
     async def testcommand(self, ctx):
         await ctx.send("This is a button!", view=self.TelephoneView(self.db_ref))
 
-    @discord.app_commands.command(name='telephonegame')
-    async def send_message(self, interaction: discord.Interaction):
-        await interaction.response.send_message('Hello!')
     """
     Test command
     """
@@ -52,7 +49,7 @@ class TelephoneCog(commands.Cog):
     """
     @commands.hybrid_command(
             brief="Invite someone to join telephone with their username.",
-            description="Invite a user with their discord username to join a telephone game. You must provide a valid username and a game_id."
+            description="Invite a user with their discord username to join a telephone game."
     )
     async def invite(self, ctx, username, game_id):
         await ctx.reply("This command is under works")
