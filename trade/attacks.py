@@ -259,12 +259,40 @@ class AttacksCog(commands.Cog):
                         message_url = f"https://discord.com/channels/{interaction.guild.id}/{interaction.channel.id}/{message_id}"
                         v_received += f"[{message_id}]({message_url})\n"
                 
-                profile_info += f"Username: **{v_username}**\nPoints: **{v_points}**\n\nAttacks Sent:\n{v_sent}\nAttacks Received:\n{v_received}\n"
+                profile_info += f"User: **{v_username}**\nPoints: **{v_points}**\n\nAttacks Sent:\n{v_sent}\nAttacks Received:\n{v_received}\n"
                 
         
         embed_profile = discord.Embed(title=f"**{user}'s Profile**", description=profile_info, color=discord.Colour.light_embed())
         
         await interaction.response.send_message("", embed=embed_profile, ephemeral=True)
+        
+    @discord.app_commands.command(name="deleteattack", description="deletes the given attack and readjusts values, must be a permitted user to use")
+    async def deleteattack(self, interaction: discord.Interaction, attack_id: str):
+        
+        permitted_users = ["spectregray", "___bryant"]
+        curr_attacks = self.db_ref_attacks.get()
+        if not (interaction.user.name in permitted_users):
+            await interaction.response.send_message("You don't have permission to delete attacks", ephemeral=True)
+        elif (curr_attacks == None) or (not (attack_id in curr_attacks)):
+            await interaction.response.send_message("This attack ID doesn't exist", ephemeral=True)
+        else:
+            selected_attack = curr_attacks[attack_id]
+            point_deduction = selected_attack["points"]
+            selected_attacker = self.db_ref_users.child(str(selected_attack["attacker"]))
+            selected_victim = self.db_ref_users.child(str(selected_attack["victim"]))
+            
+            self.db_ref_attacks.child(attack_id).set({})
+            selected_attacker.child("attacks_sent").child(attack_id).set({})
+            original_points = selected_attacker.child("points").get()
+            selected_attacker.child("points").set(original_points - point_deduction)
+            selected_victim.child("attacks_received").child(attack_id).set({})
+            
+            try:
+                msg_to_delete = await interaction.channel.fetch_message(str(attack_id))
+                await msg_to_delete.delete()
+                await interaction.response.send_message(f"The attack **{attack_id}** has been deleted completely", ephemeral=True)
+            except:
+                await interaction.response.send_message(f"The attack **{attack_id}** has been deleted within the db but discord message remains", ephemeral=True)
         
 async def setup(bot):
     await bot.add_cog(AttacksCog(bot))
