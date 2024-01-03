@@ -217,13 +217,13 @@ class AttacksCog(commands.Cog):
                     v_points = value["points"]
                     calculated_standings += f"{top_3_counter} - 🥉 {v_name} - {v_points} points\n"
                     top_3_counter += 1
-                else:
+                elif top_3_counter >= 4 and top_3_counter <= 10:
                     v_name = value["name"]
                     v_points = value["points"]
                     calculated_standings += f"{top_3_counter} - 🏅 {v_name} - {v_points} points\n"
                     top_3_counter += 1
         
-        embed_leaderboard = discord.Embed(title="**Paints & Shells Art Fight Leaderboard**", description=calculated_standings, color=discord.Colour.light_embed())
+        embed_leaderboard = discord.Embed(title="**Art Fight Leaderboard Top 10**", description=calculated_standings, color=discord.Colour.light_embed())
         
         await interaction.response.send_message("", embed=embed_leaderboard, ephemeral=True)
     
@@ -231,9 +231,17 @@ class AttacksCog(commands.Cog):
     async def profile(self, interaction: discord.Interaction, user: discord.Member):
         profile_info = ""
         user_dictionary = self.db_ref_users.get()
+        users_sorted = sorted(user_dictionary.items(), key=lambda x: x[1]["points"], reverse=True)
+        
         if user_dictionary == None:
             profile_info = "No users have been logged"
         else:
+            rank = 1
+            for key, value in users_sorted:
+                if value["name"] == user.name:
+                    break
+                rank += 1
+                
             specified_user = user_dictionary.get(str(user.id))
             if specified_user == None:
                 profile_info = "This particular user has not been logged yet"
@@ -259,7 +267,7 @@ class AttacksCog(commands.Cog):
                         message_url = f"https://discord.com/channels/{interaction.guild.id}/{interaction.channel.id}/{message_id}"
                         v_received += f"[{message_id}]({message_url})\n"
                 
-                profile_info += f"User: **{v_username}**\nPoints: **{v_points}**\n\nAttacks Sent:\n{v_sent}\nAttacks Received:\n{v_received}\n"
+                profile_info += f"User: **{v_username}**\nPoints: **{v_points}**\nRank: **{rank}**\n\nAttacks Sent:\n{v_sent}\nAttacks Received:\n{v_received}\n"
                 
         
         embed_profile = discord.Embed(title=f"**{user}'s Profile**", description=profile_info, color=discord.Colour.light_embed())
