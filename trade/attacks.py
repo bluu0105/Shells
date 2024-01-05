@@ -17,7 +17,6 @@ class AttacksCog(commands.Cog):
      
     @discord.app_commands.command(name="attack", description="attack a victim!")
     async def attack(self, interaction: discord.Interaction, victim: discord.Member, message: str, image: discord.Attachment):
-
         #select_options -> size, finish, color, shading, background
         
         select_1 = Select(
@@ -30,7 +29,7 @@ class AttacksCog(commands.Cog):
             ]
         )
         async def callback_1(interaction: discord.Interaction):
-            await interaction.response.edit_message(content=f"Your choice is **{select_1.values[0]}**!, please choose a finish", view=view_2)
+            await interaction.response.edit_message(content=f"Your choice is **{select_1.values[0]}**! please choose a finish", view=view_2)
         select_1.callback = callback_1
         view_1 = View()
         view_1.add_item(select_1)
@@ -45,7 +44,7 @@ class AttacksCog(commands.Cog):
             ]
         )
         async def callback_2(interaction: discord.Interaction):
-            await interaction.response.edit_message(content=f"Your choice is **{select_2.values[0]}**!, please choose a color", view=view_3)
+            await interaction.response.edit_message(content=f"Your choice is **{select_2.values[0]}**! please choose a color", view=view_3)
         select_2.callback = callback_2
         view_2 = View()
         view_2.add_item(select_2)
@@ -61,7 +60,7 @@ class AttacksCog(commands.Cog):
             ]
         )
         async def callback_3(interaction: discord.Interaction):
-            await interaction.response.edit_message(content=f"Your choice is **{select_3.values[0]}**!, please choose a shading", view=view_4)
+            await interaction.response.edit_message(content=f"Your choice is **{select_3.values[0]}**! please choose a shading", view=view_4)
         select_3.callback = callback_3
         view_3 = View()
         view_3.add_item(select_3)
@@ -77,7 +76,7 @@ class AttacksCog(commands.Cog):
             ]
         )
         async def callback_4(interaction: discord.Interaction):
-            await interaction.response.edit_message(content=f"Your choice is **{select_4.values[0]}**!, please choose a background", view=view_5)
+            await interaction.response.edit_message(content=f"Your choice is **{select_4.values[0]}**! please choose a background", view=view_5)
         select_4.callback = callback_4
         view_4 = View()
         view_4.add_item(select_4)
@@ -107,7 +106,15 @@ class AttacksCog(commands.Cog):
         async def success_callback(interaction: discord.Interaction):
             #self.db_ref_users.update({0: "siblings are user ids"})
             #self.db_ref_attacks.update({0: "siblings are message ids"})
-            attack_info = {interaction.message.id: {
+            
+            score_calculation = trade.utils.size_calc(select_1.values[0]) + trade.utils.finish_calc(select_2.values[0]) + trade.utils.color_calc(select_3.values[0]) + trade.utils.shading_calc(select_4.values[0]) + trade.utils.background_calc(select_5.values[0])
+            content = f"{interaction.user.mention} has attacked {victim.mention} for {score_calculation} points!"
+            final_embed = discord.Embed(title="", description=message, color=discord.Colour.light_embed())
+            final_embed.set_image(url=image.url)
+            sent_message = await interaction.channel.send(content=content, embed=final_embed, view=None)
+            content +=  f" **(attack id: {sent_message.id})**"
+            await sent_message.edit(content=content)
+            attack_info = {sent_message.id: {
                            "attacker":interaction.user.id,
                            "victim":victim.id,
                            "size": select_1.values[0],
@@ -115,7 +122,7 @@ class AttacksCog(commands.Cog):
                            "color": select_3.values[0],
                            "shading": select_4.values[0],
                            "background": select_5.values[0],
-                           "points": trade.utils.size_calc(select_1.values[0]) + trade.utils.finish_calc(select_2.values[0]) + trade.utils.color_calc(select_3.values[0]) + trade.utils.shading_calc(select_4.values[0]) + trade.utils.background_calc(select_5.values[0]),
+                           "points": score_calculation,
                            }}
             
             original_points_1 = 0
@@ -127,8 +134,8 @@ class AttacksCog(commands.Cog):
                 original_points_1 = db_ref_attacker.child("points").get()
                 original_sent_1 = trade.utils.get_none_handler(db_ref_attacker.child("attacks_sent").get())
                 original_received_1 = trade.utils.get_none_handler(db_ref_attacker.child("attacks_received").get())
-            original_sent_1[interaction.message.id] = ""
-            original_points_1 += attack_info[interaction.message.id]["points"]
+            original_sent_1[sent_message.id] = ""
+            original_points_1 += attack_info[sent_message.id]["points"]
             
             original_points_2 = 0
             original_sent_2 = {}
@@ -139,7 +146,7 @@ class AttacksCog(commands.Cog):
                 original_points_2 = db_ref_attacker.child("points").get()
                 original_sent_2 = trade.utils.get_none_handler(db_ref_attacker.child("attacks_sent").get())
                 original_received_2 = trade.utils.get_none_handler(db_ref_attacker.child("attacks_received").get())
-            original_received_2[interaction.message.id] = ""
+            original_received_2[sent_message.id] = ""
                 
             attacker_info = {interaction.user.id: {
                            "name": interaction.user.name,
@@ -153,10 +160,6 @@ class AttacksCog(commands.Cog):
                            "attacks_sent": original_sent_2,
                            "attacks_received": original_received_2,
                            }}
-
-            content = f'{interaction.user.mention} has attacked {victim.mention} for {attack_info.get(interaction.message.id).get("points")} points! *(attack id: {interaction.message.id})*'
-            final_embed = discord.Embed(title="", description=message, color=discord.Colour.light_embed())
-            final_embed.set_image(url=image.url)
             
             self.db_ref_attacks.update(attack_info)
             self.db_ref_users.update(attacker_info)
@@ -165,7 +168,6 @@ class AttacksCog(commands.Cog):
             confirmation_embed = discord.Embed(title="**Attack Successfully Sent!**", description="Your attack was successfully stored in the database\n(feel free to dismiss this message)", color=discord.Colour.light_embed())
             
             await interaction.response.edit_message(content="", embed=confirmation_embed, view=None)
-            await interaction.channel.send(content=content, embed=final_embed, view=None)
         success_button.callback = success_callback
         
         ##########
@@ -295,12 +297,20 @@ class AttacksCog(commands.Cog):
             selected_attacker.child("points").set(original_points - point_deduction)
             selected_victim.child("attacks_received").child(attack_id).set({})
             
+            print("yo what's up")
+            if selected_attacker.child("attacks_sent").get() == None and selected_attacker.child("attacks_received").get() == None:
+                print("HI THERE 1")
+                selected_attacker.set({})
+            if selected_victim.child("attacks_sent").get() == None and selected_victim.child("attacks_received").get() == None:
+                print("MATEY MATEY")
+                selected_victim.set({})    
+            
             try:
-                msg_to_delete = await interaction.channel.fetch_message(str(attack_id))
+                msg_to_delete = await interaction.channel.fetch_message(int(attack_id))
                 await msg_to_delete.delete()
-                await interaction.response.send_message(f"The attack **{attack_id}** has been deleted completely", ephemeral=True)
-            except:
-                await interaction.response.send_message(f"The attack **{attack_id}** has been deleted within the db but discord message remains", ephemeral=True)
+                await interaction.response.send_message(f"The attack **{attack_id}** has been deleted completely. If this is the attacker's only attack and/or victim's only reception, their respective profiles will have also been deleted.", ephemeral=True)
+            except Exception as e:
+                await interaction.response.send_message(f"warning, The attack **{attack_id}** has been deleted partially, check to see if all data has been deleted manually", ephemeral=True)
         
 async def setup(bot):
     await bot.add_cog(AttacksCog(bot))
