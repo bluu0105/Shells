@@ -8,6 +8,10 @@ import trade.utils
 Todo
 """
 
+"""
+Commands: /attack, /leaderboard, /profile, /viewattack, /deleteattack
+"""
+
 class AttacksCog(commands.Cog):
 
     def __init__(self, bot):
@@ -109,10 +113,10 @@ class AttacksCog(commands.Cog):
             
             score_calculation = trade.utils.size_calc(select_1.values[0]) + trade.utils.finish_calc(select_2.values[0]) + trade.utils.color_calc(select_3.values[0]) + trade.utils.shading_calc(select_4.values[0]) + trade.utils.background_calc(select_5.values[0])
             content = f"{interaction.user.mention} has attacked {victim.mention} for {score_calculation} points!"
-            final_embed = discord.Embed(title="", description=message, color=discord.Colour.light_embed())
+            final_embed = discord.Embed(title=f"{interaction.user.name}: {message}", description="", color=discord.Colour.light_embed())
             final_embed.set_image(url=image.url)
             sent_message = await interaction.channel.send(content=content, embed=final_embed, view=None)
-            content +=  f" **(attack id: {sent_message.id})**"
+            content +=  f" **attack id: {sent_message.id}**"
             await sent_message.edit(content=content)
             attack_info = {sent_message.id: {
                            "attacker":interaction.user.id,
@@ -194,7 +198,7 @@ class AttacksCog(commands.Cog):
         ##########
         ##########
     
-    @discord.app_commands.command(name="leaderboard", description="displays a leaderboard of who has the most points")
+    @discord.app_commands.command(name="leaderboard", description="displays a leaderboard of who has the most points (top 15)")
     async def leaderboard(self, interaction: discord.Interaction):
         calculated_standings = ""
         top_3_counter = 1
@@ -219,13 +223,17 @@ class AttacksCog(commands.Cog):
                     v_points = value["points"]
                     calculated_standings += f"{top_3_counter} - 🥉 {v_name} - {v_points} points\n"
                     top_3_counter += 1
-                elif top_3_counter >= 4 and top_3_counter <= 10:
+                elif top_3_counter >= 4 and top_3_counter <= 15:
                     v_name = value["name"]
                     v_points = value["points"]
                     calculated_standings += f"{top_3_counter} - 🏅 {v_name} - {v_points} points\n"
                     top_3_counter += 1
+            
+            while top_3_counter <= 15:
+                calculated_standings += f"{top_3_counter} -\n"
+                top_3_counter += 1
         
-        embed_leaderboard = discord.Embed(title="**Art Fight Leaderboard Top 10**", description=calculated_standings, color=discord.Colour.light_embed())
+        embed_leaderboard = discord.Embed(title="**Art Fight Leaderboard**", description=calculated_standings, color=discord.Colour.light_embed())
         
         await interaction.response.send_message("", embed=embed_leaderboard, ephemeral=True)
     
@@ -276,6 +284,26 @@ class AttacksCog(commands.Cog):
         
         await interaction.response.send_message("", embed=embed_profile, ephemeral=True)
         
+    @discord.app_commands.command(name="viewattack", description="provides info on the attack as well as a link to the original attack id")
+    async def viewattack(self, interaction: discord.Interaction, attack_id: str):
+        attack_node = self.db_ref_attacks.child(attack_id).get()
+        attacker_info = interaction.guild.get_member(attack_node.get("attacker")).name
+        victim_info = interaction.guild.get_member(attack_node.get("victim")).name
+        size_info = attack_node.get("size")
+        finish_info = attack_node.get("finish")
+        color_info = attack_node.get("color")
+        shading_info = attack_node.get("shading")
+        background_info = attack_node.get("background")
+        points_info = attack_node.get("points")
+        
+        lines_of_info = f"Attacker: **{attacker_info}**\nVictim: **{victim_info}**\nSize: **{size_info}**\nFinish: **{finish_info}**\nColor: **{color_info}**\nShading: **{shading_info}**\nBackground: **{background_info}**\nPoints: **{points_info}**\n"
+        
+        original_attack_url = f"https://discord.com/channels/{interaction.guild.id}/{interaction.channel.id}/{int(attack_id)}"
+        message_to_send = f"Attack #: **[{attack_id}]({original_attack_url})**\n\n {lines_of_info}"
+        embed_viewattack = discord.Embed(title="", description=message_to_send, color=discord.Colour.light_embed())
+
+        await interaction.response.send_message("", embed=embed_viewattack, ephemeral=True)
+        
     @discord.app_commands.command(name="deleteattack", description="deletes the given attack and readjusts values, must be a permitted user to use")
     async def deleteattack(self, interaction: discord.Interaction, attack_id: str):
         
@@ -297,12 +325,9 @@ class AttacksCog(commands.Cog):
             selected_attacker.child("points").set(original_points - point_deduction)
             selected_victim.child("attacks_received").child(attack_id).set({})
             
-            print("yo what's up")
             if selected_attacker.child("attacks_sent").get() == None and selected_attacker.child("attacks_received").get() == None:
-                print("HI THERE 1")
                 selected_attacker.set({})
             if selected_victim.child("attacks_sent").get() == None and selected_victim.child("attacks_received").get() == None:
-                print("MATEY MATEY")
                 selected_victim.set({})    
             
             try:
