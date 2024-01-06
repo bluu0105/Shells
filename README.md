@@ -1,6 +1,6 @@
-# ShellArtTrade
+# Shells
 The goal is for this to be a multipurpose bot for Paints & Shells (UMD Art Club). Current functionality:
-* Nothing
+* Art Attack Game
 
 Open for anyone to contribute to.
 ## Setup Python venv
@@ -36,11 +36,27 @@ Turn on all 3 Presence Intents.
 ##### Possible Firebase issues
 * is your test database public? Check in Realtime Database > Rules
 
+##### Bot Role Permissions
+* Once your bot has joined your server, be sure to give it a role with permissions to "Manage Messages"
+
 ## Database Schema
 Designed around a single server.
-"Points" -> "User" : their points
-"Attacks-Made" -> user_id -> 
-    {time, 
-    id of discord message of the attack drawing,
-    }
-"Attacks-Recieved" -> user_id -> idk yet
+.
+├── "attacks"
+│   └── Attack's Discord Message ID
+│       ├── "attacker"
+│       ├── "victim"
+│       ├── "points"
+│       ├── "size"
+│       ├── "finish"
+│       ├── "color"
+│       ├── "shading"
+│       └── "background"
+└── "users"
+    └── User's Discord ID
+        ├── "name"
+        ├── "points"
+        ├── "attacks_sent"
+        │   └── [List of attack IDs]
+        └── "attacks_received"
+            └── [List of attack IDs]
