@@ -1,8 +1,8 @@
-# ShellArtTrade
+# Shells
 
 The goal is for this to be a multipurpose bot for Paints & Shells! Current functionality:
 
-- Art Fight: "attack" another member by drawing their OC or something for them to get "points."
+- Art Fight: "attack" another member by drawing their OC or something for them to get activity points.
 
 Open for anyone to contribute to.
 
@@ -44,15 +44,30 @@ Turn on all 3 Presence Intents.
 5. Set FIREBASE_KEY in your .env to the path of this key.
 
 ##### Possible Firebase issues
+* is your test database public? Check in Realtime Database > Rules
 
-- is your test database public? Check in Realtime Database > Rules
+##### Bot Role Permissions
+* Once your bot has joined your server, be sure to give it a role with permissions to "Manage Messages"
 
 ## Database Schema
 
 Designed around a single server.
-"Points" -> "User" : their points
-"Attacks-Made" -> user_id ->
-{time,
-id of discord message of the attack drawing,
-}
-"Attacks-Recieved" -> user_id -> idk yet
+.
+├── "attacks"
+│   └── Attack's Discord Message ID
+│       ├── "attacker"
+│       ├── "victim"
+│       ├── "points"
+│       ├── "size"
+│       ├── "finish"
+│       ├── "color"
+│       ├── "shading"
+│       └── "background"
+└── "users"
+    └── User's Discord ID
+        ├── "name"
+        ├── "points"
+        ├── "attacks_sent"
+        │   └── [List of attack IDs]
+        └── "attacks_received"
+            └── [List of attack IDs]

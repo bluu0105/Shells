@@ -190,6 +190,8 @@ class AttacksCog(commands.Cog):
         
         if interaction.user.id == victim.id:
             await interaction.response.send_message("Don't attack yourself D: *(try again)*", ephemeral=True)
+        elif interaction.client.user.id == victim.id:
+            await interaction.response.send_message("Don't attack the bot D: *(try again)*", ephemeral=True)
         else:
             await interaction.response.send_message("Please select an option:", view=view_1, ephemeral=True)
         
@@ -305,12 +307,13 @@ class AttacksCog(commands.Cog):
         await interaction.response.send_message("", embed=embed_viewattack, ephemeral=True)
         
     @discord.app_commands.command(name="deleteattack", description="deletes the given attack and readjusts values, must be a permitted user to use")
+    @commands.has_permissions(administrator=True)
     async def deleteattack(self, interaction: discord.Interaction, attack_id: str):
         
         permitted_users = ["spectregray", "___bryant"]
         curr_attacks = self.db_ref_attacks.get()
         if not (interaction.user.name in permitted_users):
-            await interaction.response.send_message("You don't have permission to delete attacks", ephemeral=True)
+            await interaction.response.send_message("You don't have permission to delete attacks [s, b]", ephemeral=True)
         elif (curr_attacks == None) or (not (attack_id in curr_attacks)):
             await interaction.response.send_message("This attack ID doesn't exist", ephemeral=True)
         else:
