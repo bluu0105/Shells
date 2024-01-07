@@ -1,21 +1,23 @@
 from flask import Flask
 from threading import Thread
-import asyncio
+import schedule
 
 app = Flask('')
 
 @app.route('/')
 def home():
-    asyncio.ensure_future(print_statement())
     return "hello from the other side"
 
-async def print_statement():
-    while True:
-        print("boop")
-        await asyncio.sleep(1800) 
+def print_message():
+  print("I'm still alive")
+
+schedule.every(30).minutes.do(print_message)
 
 def run():
   app.run(host='0.0.0.0',port=8080)
+
+  while True:
+    schedule.run_pending()
 
 def keep_alive():
     t = Thread(target=run)

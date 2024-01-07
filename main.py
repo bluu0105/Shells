@@ -7,7 +7,6 @@ from discord.ext import commands
 # Firebase
 import firebase_admin
 from firebase_admin import credentials
-from firebase_admin import db
 # Serving
 from keep_alive import keep_alive
 
@@ -41,7 +40,11 @@ class PSBot(commands.Bot):
 
 async def firebase_setup():
     database_url = os.getenv('FIREBASE_DATABASE_URL')
-    cred = credentials.Certificate(os.getenv('FIREBASE_KEY'))
+    cred = os.getenv('FIREBASE_KEY')
+    
+    if cred is None: 
+        cred = credentials.Certificate(dict(os.environ))
+        
     firebase_admin.initialize_app(cred, {
         "databaseURL": database_url
     })
