@@ -36,7 +36,8 @@ class PSBot(commands.Bot):
             await self.load_extension(extension)
 
     async def on_ready(self):
-        await self.change_presence(activity=discord.Game('with your mom'))
+        return
+        # await self.change_presence(activity=discord.Game('with your mo'))
 
 async def firebase_setup():
     database_url = os.getenv('FIREBASE_DATABASE_URL')
@@ -44,7 +45,7 @@ async def firebase_setup():
     
     if cred is None: 
         cred = credentials.Certificate(dict(os.environ))
-        
+
     firebase_admin.initialize_app(cred, {
         "databaseURL": database_url
     })
