@@ -8,6 +8,8 @@ from discord.ext import commands
 import firebase_admin
 from firebase_admin import credentials
 from firebase_admin import db
+# Serving
+from keep_alive import keep_alive
 
 # Discord setup
 load_dotenv()
@@ -45,5 +47,6 @@ async def firebase_setup():
     })
     
 bot = PSBot(intents=intents)
+keep_alive()
 bot.run(TOKEN)
 # :)
