@@ -200,7 +200,7 @@ class AttacksCog(commands.Cog):
         ##########
         ##########
     
-    @discord.app_commands.command(name="leaderboard", description="displays a leaderboard of who has the most points (top 15)")
+    @discord.app_commands.command(name="leaderboard", description="displays a leaderboard of who has the most points (top 10)")
     async def leaderboard(self, interaction: discord.Interaction):
         calculated_standings = ""
         top_3_counter = 1
@@ -210,6 +210,9 @@ class AttacksCog(commands.Cog):
         else:
             users_sorted = sorted(user_dictionary.items(), key=lambda x: x[1]["points"], reverse=True)
             for key, value in users_sorted:
+                if value["points"] == 0:
+                    break
+                
                 if top_3_counter == 1:
                     v_name = value["name"]
                     v_points = value["points"]
@@ -225,13 +228,13 @@ class AttacksCog(commands.Cog):
                     v_points = value["points"]
                     calculated_standings += f"{top_3_counter} - 🥉 {v_name} - {v_points} points\n"
                     top_3_counter += 1
-                elif top_3_counter >= 4 and top_3_counter <= 15:
+                elif top_3_counter >= 4 and top_3_counter <= 10:
                     v_name = value["name"]
                     v_points = value["points"]
                     calculated_standings += f"{top_3_counter} - 🏅 {v_name} - {v_points} points\n"
                     top_3_counter += 1
             
-            while top_3_counter <= 15:
+            while top_3_counter <= 10:
                 calculated_standings += f"{top_3_counter} -\n"
                 top_3_counter += 1
         
@@ -310,7 +313,7 @@ class AttacksCog(commands.Cog):
     @commands.has_permissions(administrator=True)
     async def deleteattack(self, interaction: discord.Interaction, attack_id: str):
         
-        permitted_users = ["spectregray", "___bryant"]
+        permitted_users = ["skarpetky", "spectregray", "___bryant"]
         curr_attacks = self.db_ref_attacks.get()
         if not (interaction.user.name in permitted_users):
             await interaction.response.send_message("You don't have permission to delete attacks [s, b]", ephemeral=True)
