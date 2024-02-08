@@ -114,8 +114,9 @@ class AttacksCog(commands.Cog):
             score_calculation = trade.utils.size_calc(select_1.values[0]) + trade.utils.finish_calc(select_2.values[0]) + trade.utils.color_calc(select_3.values[0]) + trade.utils.shading_calc(select_4.values[0]) + trade.utils.background_calc(select_5.values[0])
             content = f"{interaction.user.mention} has attacked {victim.mention} for {score_calculation} points!"
             final_embed = discord.Embed(title=f"{interaction.user.name}: {message}", description="", color=discord.Colour.light_embed())
-            final_embed.set_image(url=image.url)
-            sent_message = await interaction.channel.send(content=content, embed=final_embed, view=None)
+            final_embed.set_image(url="attachment://image.png")
+            image_file = await image.to_file(filename="image.png")
+            sent_message = await interaction.channel.send(content=content, embed=final_embed, file=image_file, view=None)
             content +=  f" **attack id: {sent_message.id}**"
             await sent_message.edit(content=content)
             attack_info = {sent_message.id: {
@@ -127,29 +128,38 @@ class AttacksCog(commands.Cog):
                            "shading": select_4.values[0],
                            "background": select_5.values[0],
                            "points": score_calculation,
+                           "message": message,
                            }}
             
             original_points_1 = 0
             original_sent_1 = {}
             original_received_1 = {}
+            original_oclink_1 = "N/A"
+            original_notes_1 = "N/A"
  
             if self.db_ref_users.get() != None and str(interaction.user.id) in self.db_ref_users.get():
                 db_ref_attacker = self.db_ref_users.child(str(interaction.user.id))
                 original_points_1 = db_ref_attacker.child("points").get()
                 original_sent_1 = trade.utils.get_none_handler(db_ref_attacker.child("attacks_sent").get())
                 original_received_1 = trade.utils.get_none_handler(db_ref_attacker.child("attacks_received").get())
+                original_oclink_1 = trade.utils.get_none_handler(db_ref_attacker.child("oclink").get())
+                original_notes_1 = trade.utils.get_none_handler(db_ref_attacker.child("notes").get())
             original_sent_1[sent_message.id] = ""
             original_points_1 += attack_info[sent_message.id]["points"]
             
             original_points_2 = 0
             original_sent_2 = {}
             original_received_2 = {}
+            original_oclink_2 = "N/A"
+            original_notes_2 = "N/A"
 
             if self.db_ref_users.get() != None and str(victim.id) in self.db_ref_users.get():
                 db_ref_attacker = self.db_ref_users.child(str(victim.id))
                 original_points_2 = db_ref_attacker.child("points").get()
                 original_sent_2 = trade.utils.get_none_handler(db_ref_attacker.child("attacks_sent").get())
                 original_received_2 = trade.utils.get_none_handler(db_ref_attacker.child("attacks_received").get())
+                original_oclink_2 = trade.utils.get_none_handler(db_ref_attacker.child("oclink").get())
+                original_notes_2 = trade.utils.get_none_handler(db_ref_attacker.child("notes").get())
             original_received_2[sent_message.id] = ""
                 
             attacker_info = {interaction.user.id: {
@@ -157,19 +167,23 @@ class AttacksCog(commands.Cog):
                            "points": original_points_1,
                            "attacks_sent": original_sent_1,
                            "attacks_received": original_received_1,
+                           "oclink": original_oclink_1,
+                           "notes": original_notes_1,
                            }}
             victim_info = {victim.id: {
                            "name": victim.name,
                            "points": original_points_2,
                            "attacks_sent": original_sent_2,
                            "attacks_received": original_received_2,
+                           "oclink": original_oclink_2,
+                           "notes": original_notes_2,
                            }}
             
             self.db_ref_attacks.update(attack_info)
             self.db_ref_users.update(attacker_info)
             self.db_ref_users.update(victim_info)
             
-            confirmation_embed = discord.Embed(title="**Attack Successfully Sent!**", description="Your attack was successfully stored in the database\n(feel free to dismiss this message)", color=discord.Colour.light_embed())
+            confirmation_embed = discord.Embed(title="**Attack Successfully Sent!**", color=discord.Colour.light_embed())
             
             await interaction.response.edit_message(content="", embed=confirmation_embed, view=None)
         success_button.callback = success_callback
@@ -259,7 +273,7 @@ class AttacksCog(commands.Cog):
                 
             specified_user = user_dictionary.get(str(user.id))
             if specified_user == None:
-                profile_info = "This particular user has not been logged yet"
+                profile_info = "This particular user has not been logged yet, if this user is you then you need to attack or be attacked to have your profile logged"
             else:
                 v_username = specified_user.get("name")
                 v_points = specified_user.get("points")
@@ -281,13 +295,41 @@ class AttacksCog(commands.Cog):
                     for message_id in received_dictionary:
                         message_url = f"https://discord.com/channels/{interaction.guild.id}/{interaction.channel.id}/{message_id}"
                         v_received += f"[{message_id}]({message_url})\n"
+                        
+                v_oclink = specified_user.get("oclink")
+                #v_oclink = f"[{v_oclink}]({v_oclink})"
+                v_notes = specified_user.get("notes")
                 
-                profile_info += f"User: **{v_username}**\nPoints: **{v_points}**\nRank: **{rank}**\n\nAttacks Sent:\n{v_sent}\nAttacks Received:\n{v_received}\n"
+                profile_info += f"User: **{v_username}**\nPoints: **{v_points}**\nRank: **{rank}**\n\nAttacks Sent:\n{v_sent}\nAttacks Received:\n{v_received}\nOC Link:\n**{v_oclink}**\n\nNotes:\n**{v_notes}**\n"
                 
         
         embed_profile = discord.Embed(title=f"**{user}'s Profile**", description=profile_info, color=discord.Colour.light_embed())
         
         await interaction.response.send_message("", embed=embed_profile, ephemeral=True)
+    
+    @discord.app_commands.command(name="editprofile", description="Allows exisitng users to add links to OCs and preference notes (blanks fields stay the same)")
+    async def editprofile(self, interaction: discord.Interaction, new_oc_link: str = "", new_notes: str = ""):
+        
+        user_dictionary = self.db_ref_users.get()
+        
+        if new_oc_link == "" and new_notes == "":
+            await interaction.response.send_message("You didn't pass in any profile updates to make", ephemeral=True)
+        elif user_dictionary == None:
+            await interaction.response.send_message("No profiles are currently logged", ephemeral=True)
+        elif not (str(interaction.user.id) in user_dictionary):
+            await interaction.response.send_message("You aren't logged yet, you need to attack or be attacked in order to create a profile", ephemeral=True)
+        else:
+            
+            print(self.db_ref_users.child(str(interaction.user.id)).get())
+
+            if new_oc_link != "":
+                self.db_ref_users.child(str(interaction.user.id)).child("oclink").delete()
+                self.db_ref_users.child(str(interaction.user.id)).update({"oclink": new_oc_link})
+            if new_notes != "":
+                self.db_ref_users.child(str(interaction.user.id)).child("notes").delete()
+                self.db_ref_users.child(str(interaction.user.id)).update({"notes": new_notes})
+        
+            await interaction.response.send_message("Links and Notes have been updated! (feel free to dismiss this message)", ephemeral=True)
         
     @discord.app_commands.command(name="viewattack", description="provides info on the attack as well as a link to the original attack id")
     async def viewattack(self, interaction: discord.Interaction, attack_id: str):
@@ -316,7 +358,7 @@ class AttacksCog(commands.Cog):
         permitted_users = ["skarpetky", "spectregray", "___bryant"]
         curr_attacks = self.db_ref_attacks.get()
         if not (interaction.user.name in permitted_users):
-            await interaction.response.send_message("You don't have permission to delete attacks [s, b]", ephemeral=True)
+            await interaction.response.send_message("You don't have permission to delete attacks", ephemeral=True)
         elif (curr_attacks == None) or (not (attack_id in curr_attacks)):
             await interaction.response.send_message("This attack ID doesn't exist", ephemeral=True)
         else:

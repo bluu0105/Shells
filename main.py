@@ -7,8 +7,6 @@ from discord.ext import commands
 # Firebase
 import firebase_admin
 from firebase_admin import credentials
-# Serving
-from keep_alive import keep_alive
 
 # Discord setup
 load_dotenv()
@@ -41,16 +39,12 @@ class PSBot(commands.Bot):
 
 async def firebase_setup():
     database_url = os.getenv('FIREBASE_DATABASE_URL')
-    cred = os.getenv('FIREBASE_KEY')
-    
-    if cred is None: 
-        cred = credentials.Certificate(dict(os.environ))
+    cred = credentials.Certificate(os.getenv('FIREBASE_KEY'))
 
     firebase_admin.initialize_app(cred, {
         "databaseURL": database_url
     })
     
 bot = PSBot(intents=intents)
-keep_alive()
 bot.run(TOKEN)
 # :)
