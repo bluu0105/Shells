@@ -52,12 +52,14 @@ Turn on all 3 Presence Intents.
 ## Database Schema
 
 Designed around a single server.
+```
 .  
 ├── "attacks"  
 │   └── Attack's Discord Message ID  
 │       ├── "attacker"  
 │       ├── "victim"  
-│       ├── "points"    
+│       ├── "points"
+│       ├── "message"     
 │       ├── "size"  
 │       ├── "finish"  
 │       ├── "color"  
@@ -66,8 +68,11 @@ Designed around a single server.
 └── "users"  
     └── User's Discord ID  
         ├── "name"  
-        ├── "points"  
+        ├── "points"
+        ├── "oclink"
+        ├── "notes"      
         ├── "attacks_sent"  
         │   └── [List of attack IDs]  
         └── "attacks_received"  
             └── [List of attack IDs]  
+```

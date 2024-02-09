@@ -9,7 +9,7 @@ Todo
 """
 
 """
-Commands: /attack, /leaderboard, /profile, /viewattack, /deleteattack
+Commands: /attack, /leaderboard, /profile, /editprofile,/viewattack, /deleteattack,
 """
 
 class AttacksCog(commands.Cog):
@@ -18,8 +18,10 @@ class AttacksCog(commands.Cog):
         self.bot = bot
         self.db_ref_users = db.reference("/").child("users")
         self.db_ref_attacks = db.reference("/").child("attacks")
+        
+    af = discord.app_commands.Group(name="af", description="art fight commands!")
      
-    @discord.app_commands.command(name="attack", description="attack a victim!")
+    @af.command(name="attack", description="attack a victim!")
     async def attack(self, interaction: discord.Interaction, victim: discord.Member, message: str, image: discord.Attachment):
         #select_options -> size, finish, color, shading, background
         
@@ -214,7 +216,7 @@ class AttacksCog(commands.Cog):
         ##########
         ##########
     
-    @discord.app_commands.command(name="leaderboard", description="displays a leaderboard of who has the most points (top 10)")
+    @af.command(name="leaderboard", description="displays a leaderboard of who has the most points (top 10)")
     async def leaderboard(self, interaction: discord.Interaction):
         calculated_standings = ""
         top_3_counter = 1
@@ -256,15 +258,15 @@ class AttacksCog(commands.Cog):
         
         await interaction.response.send_message("", embed=embed_leaderboard, ephemeral=True)
     
-    @discord.app_commands.command(name="profile", description="shows a user\'s profile including points and attack info")
+    @af.command(name="profile", description="shows a user\'s profile including points and attack info")
     async def profile(self, interaction: discord.Interaction, user: discord.Member):
         profile_info = ""
         user_dictionary = self.db_ref_users.get()
-        users_sorted = sorted(user_dictionary.items(), key=lambda x: x[1]["points"], reverse=True)
         
         if user_dictionary == None:
             profile_info = "No users have been logged"
         else:
+            users_sorted = sorted(user_dictionary.items(), key=lambda x: x[1]["points"], reverse=True)
             rank = 1
             for key, value in users_sorted:
                 if value["name"] == user.name:
@@ -307,7 +309,7 @@ class AttacksCog(commands.Cog):
         
         await interaction.response.send_message("", embed=embed_profile, ephemeral=True)
     
-    @discord.app_commands.command(name="editprofile", description="Allows exisitng users to add links to OCs and preference notes (blanks fields stay the same)")
+    @af.command(name="editprofile", description="Allows exisitng users to add links to OCs and preference notes (blanks fields stay the same)")
     async def editprofile(self, interaction: discord.Interaction, new_oc_link: str = "", new_notes: str = ""):
         
         user_dictionary = self.db_ref_users.get()
@@ -319,8 +321,6 @@ class AttacksCog(commands.Cog):
         elif not (str(interaction.user.id) in user_dictionary):
             await interaction.response.send_message("You aren't logged yet, you need to attack or be attacked in order to create a profile", ephemeral=True)
         else:
-            
-            print(self.db_ref_users.child(str(interaction.user.id)).get())
 
             if new_oc_link != "":
                 self.db_ref_users.child(str(interaction.user.id)).child("oclink").delete()
@@ -331,27 +331,32 @@ class AttacksCog(commands.Cog):
         
             await interaction.response.send_message("Links and Notes have been updated! (feel free to dismiss this message)", ephemeral=True)
         
-    @discord.app_commands.command(name="viewattack", description="provides info on the attack as well as a link to the original attack id")
+    @af.command(name="viewattack", description="provides info on the attack as well as a link to the original attack id")
     async def viewattack(self, interaction: discord.Interaction, attack_id: str):
         attack_node = self.db_ref_attacks.child(attack_id).get()
-        attacker_info = interaction.guild.get_member(attack_node.get("attacker")).name
-        victim_info = interaction.guild.get_member(attack_node.get("victim")).name
-        size_info = attack_node.get("size")
-        finish_info = attack_node.get("finish")
-        color_info = attack_node.get("color")
-        shading_info = attack_node.get("shading")
-        background_info = attack_node.get("background")
-        points_info = attack_node.get("points")
         
-        lines_of_info = f"Attacker: **{attacker_info}**\nVictim: **{victim_info}**\nSize: **{size_info}**\nFinish: **{finish_info}**\nColor: **{color_info}**\nShading: **{shading_info}**\nBackground: **{background_info}**\nPoints: **{points_info}**\n"
-        
-        original_attack_url = f"https://discord.com/channels/{interaction.guild.id}/{interaction.channel.id}/{int(attack_id)}"
-        message_to_send = f"Attack #: **[{attack_id}]({original_attack_url})**\n\n {lines_of_info}"
-        embed_viewattack = discord.Embed(title="", description=message_to_send, color=discord.Colour.light_embed())
+        if attack_node == None:
+            await interaction.response.send_message("This id does not match with any attacks (feel free to dismiss this message)", ephemeral=True)
+        else:
+            attacker_info = interaction.guild.get_member(attack_node.get("attacker")).name
+            victim_info = interaction.guild.get_member(attack_node.get("victim")).name
+            size_info = attack_node.get("size")
+            finish_info = attack_node.get("finish")
+            color_info = attack_node.get("color")
+            shading_info = attack_node.get("shading")
+            background_info = attack_node.get("background")
+            points_info = attack_node.get("points")
+            message_info = attack_node.get("message")
+            
+            lines_of_info = f"Attacker: **{attacker_info}**\nVictim: **{victim_info}**\nSize: **{size_info}**\nFinish: **{finish_info}**\nColor: **{color_info}**\nShading: **{shading_info}**\nBackground: **{background_info}**\nPoints: **{points_info}**\nMessage: **{message_info}**\n"
+            
+            original_attack_url = f"https://discord.com/channels/{interaction.guild.id}/{interaction.channel.id}/{int(attack_id)}"
+            message_to_send = f"Attack #: **[{attack_id}]({original_attack_url})**\n\n {lines_of_info}"
+            embed_viewattack = discord.Embed(title="", description=message_to_send, color=discord.Colour.light_embed())
 
-        await interaction.response.send_message("", embed=embed_viewattack, ephemeral=True)
+            await interaction.response.send_message("", embed=embed_viewattack, ephemeral=True)
         
-    @discord.app_commands.command(name="deleteattack", description="deletes the given attack and readjusts values, must be a permitted user to use")
+    @af.command(name="deleteattack", description="deletes the given attack and readjusts values, must be a permitted user to use")
     @commands.has_permissions(administrator=True)
     async def deleteattack(self, interaction: discord.Interaction, attack_id: str):
         
