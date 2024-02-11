@@ -12,13 +12,19 @@ Open for anyone to contribute to.
 
 2. Clone this repository.
 
-3. Navigate into the project directory:
+3. Make a copy of the example environment variables file:
+   ```bash
+   cd Shells
+   cp .env.example .env
+   ```
+
+4. Navigate into the project src directory:
 
    ```bash
    cd Shells/src
    ```
 
-4. Create a new virtual environment:
+5. Create a new virtual environment:
 
     #### For mac:
 
@@ -34,17 +40,12 @@ Open for anyone to contribute to.
     $ venv/Scripts/activate
     ```
 
-5. Install the requirements:
+6. Install the requirements:
 
    ```bash
    pip install -r requirements.txt
    ```
 
-6. Make a copy of the example environment variables file:
-
-   ```bash
-   cp .env.example .env
-   ```
 
 ### Discord Bot
 
@@ -61,7 +62,7 @@ Open for anyone to contribute to.
 ### Local DB - Firebase
 
 1. Create a [Firebase project](https://console.firebase.google.com/u/0/)
-2. Go to `Build -> Realtime Database` and create a database, copy the link you see (should end with firebase.io.com). Save this to your .env file as `FIREBASE_DATABASE_URL`
+2. Go to `Build -> Realtime Database` and create a database, copy the link you see (ie. `https://example.firebaseio.com`). Save this to your .env file as `FIREBASE_DATABASE_URL`
 3. Go to `Project Settings -> ⚙️ -> Service Accounts -> Generate New Private Key` and download the JSON file as `firebase_key.json`.
 4. Drag the downloaded file into this directory.
 5. Set FIREBASE_KEY in your .env to the path of this key.
