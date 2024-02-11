@@ -6,7 +6,7 @@ The goal is for this to be a multipurpose bot for Paints & Shells! Current funct
 
 Open for anyone to contribute to.
 
-## Setup
+## Python Setup
 
 1. If you don’t have Python installed, [install it from here](https://www.python.org/downloads/).
 
