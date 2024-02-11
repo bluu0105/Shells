@@ -305,7 +305,7 @@ class AttacksCog(commands.Cog):
                 profile_info += f"User: **{v_username}**\nPoints: **{v_points}**\nRank: **{rank}**\n\nAttacks Sent:\n{v_sent}\nAttacks Received:\n{v_received}\nOC Link:\n**{v_oclink}**\n\nNotes:\n**{v_notes}**\n"
                 
         
-        embed_profile = discord.Embed(title=f"**{user}'s Profile**", description=profile_info, color=discord.Colour.light_embed())
+        embed_profile = discord.Embed(title=f"**{user}'s Profile**", description=profile_info, color=discord.Colour.light_embed(), icon_url=interaction.user.avatar)
         
         await interaction.response.send_message("", embed=embed_profile, ephemeral=True)
     
