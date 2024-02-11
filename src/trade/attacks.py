@@ -302,10 +302,12 @@ class AttacksCog(commands.Cog):
                 #v_oclink = f"[{v_oclink}]({v_oclink})"
                 v_notes = specified_user.get("notes")
                 
-                profile_info += f"User: **{v_username}**\nPoints: **{v_points}**\nRank: **{rank}**\n\nAttacks Sent:\n{v_sent}\nAttacks Received:\n{v_received}\nOC Link:\n**{v_oclink}**\n\nNotes:\n**{v_notes}**\n"
+                profile_info += f"User: **<@{user.id}>**\nPoints: **{v_points}**\nRank: **{rank}**\n\nAttacks Sent:\n{v_sent}\nAttacks Received:\n{v_received}\nOC Link:\n**{v_oclink}**\n\nNotes:\n**{v_notes}**\n"
                 
         
-        embed_profile = discord.Embed(title=f"**{user}'s Profile**", description=profile_info, color=discord.Colour.light_embed())
+        embed_profile = discord.Embed(title='', description=profile_info, color=discord.Colour.light_embed())
+        # embed_profile.set_thumbnail(url=user.avatar)
+        embed_profile.set_author(name=f'{v_username}\'s Profile', icon_url=user.avatar)
         
         await interaction.response.send_message("", embed=embed_profile, ephemeral=True)
     

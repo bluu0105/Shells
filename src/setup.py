@@ -22,7 +22,7 @@ class SetUpCog(commands.Cog):
         try: 
             self.bot.tree.copy_global_to(guild=ctx.guild)
             synced = await self.bot.tree.sync()
-            print(synced)
+            print(f"Synced {len(synced)} commands/n")
             await ctx.send("Synced")
         except discord.HTTPException as e:
             await ctx.send("Failed" + str(e))

@@ -35,8 +35,10 @@ class PSBot(commands.Bot):
             await self.load_extension(extension)
 
     async def on_ready(self):
+        # Clear terminal screen
+        # os.system('cls' if os.name == 'nt' else 'clear')
         return
-        # await self.change_presence(activity=discord.Game('with your mo'))
+        # await self.change_presence(activity=discord.Game('with your mom'))
 
 async def firebase_setup():
     database_url = os.getenv('FIREBASE_DATABASE_URL')
