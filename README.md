@@ -15,7 +15,7 @@ Open for anyone to contribute to.
 3. Navigate into the project directory:
 
    ```bash
-   $ cd Shells
+   cd Shells
    ```
 
 4. Create a new virtual environment:
@@ -23,27 +23,27 @@ Open for anyone to contribute to.
     #### For mac:
 
     ```bash
-    $ python -m venv venv
-    $ source venv/bin/activate
+    python -m venv venv
+    source venv/bin/activate
     ```
 
     #### For windows:
 
     ```bash
-    $ python -m venv venv
-    $ venv/Scripts/activate
+    python -m venv venv
+    venv/Scripts/activate
     ```
 
 5. Install the requirements:
 
    ```bash
-   $ pip install -r requirements.txt
+   pip install -r requirements.txt
    ```
 
 6. Make a copy of the example environment variables file:
 
    ```bash
-   $ cp .env.example .env
+   cp .env.example .env
    ```
 
 ### Discord Bot
@@ -75,8 +75,8 @@ Open for anyone to contribute to.
 Run the app using python or python3 depending on your system (make sure you are in the `Shells/src` directory):
 
 ```bash
-$ cd src
-$ python main.py
+cd src
+python main.py
 ```
 
 ## Database Schema
