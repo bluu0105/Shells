@@ -40,11 +40,22 @@ Open for anyone to contribute to.
    pip install -r requirements.txt
    ```
 
-6. Make a copy of the example environment variables file:
+6. Make an environment variables file:
 
    ```bash
-   cp .env.example .env
+   touch .env
    ```
+7. Fill in the .env file with the following:
+
+    ```bash
+    DISCORD_TOKEN=your_discord_bot_token
+    FIREBASE_DATABASE_URL=your_firebase_database_url
+    FIREBASE_KEY=firebase_key.json
+    ```
+
+    * Replace `your_discord_bot_token` with your bot's token.
+    * Replace `your_firebase_database_url` with your Firebase database URL.
+    * Replace `firebase_key.json` with the path to your Firebase key file.
 
 ### Discord Bot
 
