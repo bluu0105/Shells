@@ -306,7 +306,7 @@ class AttacksCog(commands.Cog):
                 
         
         embed_profile = discord.Embed(title='', description=profile_info, color=discord.Colour.light_embed())
-        embed_profile.set_thumbnail(url=user.avatar)
+        # embed_profile.set_thumbnail(url=user.avatar)
         embed_profile.set_author(name=f'{v_username}\'s Profile', icon_url=interaction.user.avatar)
         
         await interaction.response.send_message("", embed=embed_profile, ephemeral=True)
