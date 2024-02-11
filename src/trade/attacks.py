@@ -304,9 +304,13 @@ class AttacksCog(commands.Cog):
                 
                 profile_info += f"User: **<@{user.id}>**\nPoints: **{v_points}**\nRank: **{rank}**\n\nAttacks Sent:\n{v_sent}\nAttacks Received:\n{v_received}\nOC Link:\n**{v_oclink}**\n\nNotes:\n**{v_notes}**\n"
                 
+        # embed manipulation for a specific message id (most recent attack).
+        fetch_atk_message = await interaction.channel.fetch_message(message_id)
         
+        # Profile Embed
         embed_profile = discord.Embed(title='', description=profile_info, color=discord.Colour.light_embed())
         # embed_profile.set_thumbnail(url=user.avatar)
+        embed_profile.set_thumbnail(url=fetch_atk_message.embeds[0].image.url)
         embed_profile.set_author(name=f'{v_username}\'s Profile', icon_url=user.avatar)
         
         await interaction.response.send_message("", embed=embed_profile, ephemeral=True)
