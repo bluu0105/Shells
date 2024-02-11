@@ -15,7 +15,7 @@ Open for anyone to contribute to.
 3. Navigate into the project directory:
 
    ```bash
-   cd Shells
+   cd Shells/src
    ```
 
 4. Create a new virtual environment:
@@ -62,8 +62,8 @@ Open for anyone to contribute to.
 
 1. Create a [Firebase project](https://console.firebase.google.com/u/0/)
 2. Go to `Build -> Realtime Database` and create a database, copy the link you see (should end with firebase.io.com). Save this to your .env file as `FIREBASE_DATABASE_URL`
-3. Go to `Project Settings -> ⚙️ -> Service Accounts -> Generate New Private Key` and download the JSON file.
-4. Drag the downloaded file into this directory. Change the name to `firebase_key`.
+3. Go to `Project Settings -> ⚙️ -> Service Accounts -> Generate New Private Key` and download the JSON file as `firebase_key.json`.
+4. Drag the downloaded file into this directory.
 5. Set FIREBASE_KEY in your .env to the path of this key.
 
     ##### * Possible Firebase issues
