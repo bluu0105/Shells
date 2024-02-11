@@ -72,10 +72,9 @@ Open for anyone to contribute to.
 
 ### Running the bot
 
-Run the app using python or python3 depending on your system (make sure you are in the src directory):
+Run the app using python or python3 depending on your system (make sure you are in the `Shells/src` directory):
 
 ```bash
-cd src
 python main.py
 ```
 
