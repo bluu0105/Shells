@@ -263,6 +263,12 @@ class AttacksCog(commands.Cog):
         profile_info = ""
         user_dictionary = self.db_ref_users.get()
         
+        # list of attack Message Objects
+        atk_msgs = []
+        
+        # list of defense Message Objects
+        def_msgs = []
+        
         if user_dictionary == None:
             profile_info = "No users have been logged"
         else:
@@ -288,6 +294,10 @@ class AttacksCog(commands.Cog):
                     for message_id in sent_dictionary:
                         message_url = f"https://discord.com/channels/{interaction.guild.id}/{interaction.channel.id}/{message_id}"
                         v_sent += f"[{message_id}]({message_url})\n"
+                        
+                        # add to list of attack Message Objects
+                        msg_obj = await interaction.channel.fetch_message(message_id)
+                        atk_msgs.append(msg_obj)
                 
                 received_dictionary = specified_user.get("attacks_received")
                 v_received = ""
@@ -298,22 +308,47 @@ class AttacksCog(commands.Cog):
                         message_url = f"https://discord.com/channels/{interaction.guild.id}/{interaction.channel.id}/{message_id}"
                         v_received += f"[{message_id}]({message_url})\n"
                         
+                        # add to list of defense Message Objects
+                        msg_obj = await interaction.channel.fetch_message(message_id)
+                        def_msgs.append(msg_obj)
+                        
                 v_oclink = specified_user.get("oclink")
                 #v_oclink = f"[{v_oclink}]({v_oclink})"
                 v_notes = specified_user.get("notes")
                 
                 profile_info += f"User: **<@{user.id}>**\nPoints: **{v_points}**\nRank: **{rank}**\n\nAttacks Sent:\n{v_sent}\nAttacks Received:\n{v_received}\nOC Link:\n**{v_oclink}**\n\nNotes:\n**{v_notes}**\n"
-                
-        # embed manipulation for a specific message id (most recent attack).
-        fetch_atk_message = await interaction.channel.fetch_message(message_id)
         
         # Profile Embed
         embed_profile = discord.Embed(title='', description=profile_info, color=discord.Colour.light_embed())
         # embed_profile.set_thumbnail(url=user.avatar)
-        embed_profile.set_thumbnail(url=fetch_atk_message.embeds[0].image.url)
         embed_profile.set_author(name=f'{v_username}\'s Profile', icon_url=user.avatar)
         
-        await interaction.response.send_message("", embed=embed_profile, ephemeral=True)
+        # pagination of attack images using left and right buttons
+        atk_view = View()
+        if len(atk_msgs) > 0:
+            # index tracker for attack images
+            atk_view.index = 0
+            
+            atk_view.add_item(Button(label="<", style=discord.ButtonStyle.primary))
+            atk_view.add_item(Button(label=">", style=discord.ButtonStyle.primary))
+            embed_profile.set_image(url=atk_msgs[atk_view.index].embeds[0].image.url)
+            
+            async def next_button_callback(interaction: discord.Interaction):
+                # edit embed image to next attack using index
+                embed_profile.set_image(url=atk_msgs[(atk_view.index+1) % len(atk_msgs)].embeds[0].image.url)
+                atk_view.index = (atk_view.index+1) % len(atk_msgs)
+                await interaction.response.edit_message(embed=embed_profile, view=atk_view)
+            
+            async def prev_button_callback(interaction: discord.Interaction):
+                # edit embed image to previous attack using index
+                embed_profile.set_image(url=atk_msgs[(atk_view.index-1) % len(atk_msgs)].embeds[0].image.url)
+                atk_view.index = (atk_view.index-1) % len(atk_msgs)
+                await interaction.response.edit_message(embed=embed_profile, view=atk_view)
+            
+            atk_view.children[0].callback = prev_button_callback
+            atk_view.children[1].callback = next_button_callback
+        
+        await interaction.response.send_message("", embed=embed_profile, view=atk_view, ephemeral=True)
     
     @af.command(name="editprofile", description="Allows exisitng users to add links to OCs and preference notes (blanks fields stay the same)")
     async def editprofile(self, interaction: discord.Interaction, new_oc_link: str = "", new_notes: str = ""):
