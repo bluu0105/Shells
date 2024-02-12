@@ -321,7 +321,7 @@ class AttacksCog(commands.Cog):
         # Profile Embed
         embed_profile = discord.Embed(title='', description=profile_info, color=discord.Colour.light_embed())
         # embed_profile.set_thumbnail(url=user.avatar)
-        embed_profile.set_author(name=f'{v_username}\'s Profile', icon_url=user.avatar)
+        embed_profile.set_author(name=f'{user.name}\'s Profile', icon_url=user.avatar)
         embed_profile.set_footer(text="Art Fight Profile", icon_url=interaction.guild.icon.url)
         
         # pagination of attack images using left and right buttons
