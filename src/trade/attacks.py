@@ -100,6 +100,7 @@ class AttacksCog(commands.Cog):
         )
         async def callback_5(interaction: discord.Interaction):
             confirm_embed = discord.Embed(title="Confirm Attack", color=discord.Colour.light_embed(), description=f"Size: **{select_1.values[0]}**\nFinish: **{select_2.values[0]}**\nColor: **{select_3.values[0]}**\nShading: **{select_4.values[0]}**\nBackground: **{select_5.values[0]}**\n")
+            confirm_embed.set_author(name="Art Fight", icon_url=interaction.guild.icon.url)
             await interaction.response.edit_message(content=None, embed=confirm_embed, view=view_6)
         select_5.callback = callback_5
         view_5 = View()
@@ -186,6 +187,7 @@ class AttacksCog(commands.Cog):
             self.db_ref_users.update(victim_info)
             
             confirmation_embed = discord.Embed(title="**Attack Successfully Sent!**", color=discord.Colour.light_embed())
+            confirmation_embed.set_author(name="Art Fight", icon_url=interaction.guild.icon.url)
             
             await interaction.response.edit_message(content="", embed=confirmation_embed, view=None)
         success_button.callback = success_callback
@@ -195,6 +197,7 @@ class AttacksCog(commands.Cog):
         cancel_button = Button(label="Cancel Attack" ,style=discord.ButtonStyle.danger)
         async def cancel_callback(interaction: discord.Interaction):
             cancel_embed = discord.Embed(title="**Attack Cancelled**", description="(feel free to dismiss this message)", color=discord.Colour.light_embed())
+            cancel_embed.set_author(name="Art Fight", icon_url=interaction.guild.icon.url)
             await interaction.response.edit_message(content="", embed=cancel_embed, view=None)
         cancel_button.callback = cancel_callback
         
