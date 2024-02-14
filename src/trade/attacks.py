@@ -114,15 +114,26 @@ class AttacksCog(commands.Cog):
             #self.db_ref_users.update({0: "siblings are user ids"})
             #self.db_ref_attacks.update({0: "siblings are message ids"})
             
+            await interaction.response.defer()
+            
             score_calculation = trade.utils.size_calc(select_1.values[0]) + trade.utils.finish_calc(select_2.values[0]) + trade.utils.color_calc(select_3.values[0]) + trade.utils.shading_calc(select_4.values[0]) + trade.utils.background_calc(select_5.values[0])
-            content = f"{interaction.user.mention} has attacked {victim.mention} for {score_calculation} points!"
-            final_embed = discord.Embed(title=f"{interaction.user.name}: {message}", description="", color=discord.Colour.light_embed())
-            final_embed.set_author(name="Art Fight", icon_url=interaction.guild.icon.url)
+            
+            content = f"{victim.mention} you have been attacked by {interaction.user.mention}!"
+            # embed_content = f"**{interaction.user.mention}** has attacked **{victim.mention}** for {score_calculation} points!"
+            
+            final_embed = discord.Embed(title="", description="", color=discord.Colour.light_embed())
+            final_embed.set_author(name=f"{interaction.user.name} : {message}", icon_url=interaction.user.avatar.url)
+            final_embed.set_footer(text=f"Art Fight", icon_url=interaction.guild.icon.url)
             final_embed.set_image(url="attachment://image.png")
             image_file = await image.to_file(filename="image.png")
             sent_message = await interaction.channel.send(content=content, embed=final_embed, file=image_file, view=None)
-            content +=  f" **attack id: {sent_message.id}**"
+
+            content +=  f"\n **Attack Id: {sent_message.id}**"
+            # embed_content +=  f"\n **Attack Id: {sent_message.id}**"
+            # final_embed.description = embed_content
             await sent_message.edit(content=content)
+            # await sent_message.edit(embed=final_embed)
+                        
             attack_info = {sent_message.id: {
                            "attacker":interaction.user.id,
                            "victim":victim.id,
@@ -190,7 +201,8 @@ class AttacksCog(commands.Cog):
             confirmation_embed = discord.Embed(title="**Attack Successfully Sent!**", color=discord.Colour.light_embed())
             confirmation_embed.set_author(name="Art Fight", icon_url=interaction.guild.icon.url)
             
-            await interaction.response.edit_message(content="", embed=confirmation_embed, view=None)
+            await interaction.edit_original_response(content="", embed=confirmation_embed, view=None)
+            # await interaction.edit_original_response(embed=confirmation_embed, view=None)
         success_button.callback = success_callback
         
         ##########
@@ -310,8 +322,10 @@ class AttacksCog(commands.Cog):
                 
         
         embed_profile = discord.Embed(title='', description=profile_info, color=discord.Colour.light_embed())
-        # embed_profile.set_thumbnail(url=user.avatar)
         embed_profile.set_author(name=f'{user.name}\'s Profile', icon_url=user.avatar)
+        
+        # footer_info = f"Search Keyword: \nfrom:{self.bot.user.name}#{self.bot.user.discriminator} mentions: {user.name}"
+        # embed_profile.set_footer(text=footer_info, icon_url=interaction.guild.icon.url)
         
         await interaction.response.send_message("", embed=embed_profile, ephemeral=True)
     
@@ -366,7 +380,7 @@ class AttacksCog(commands.Cog):
     @commands.has_permissions(administrator=True)
     async def deleteattack(self, interaction: discord.Interaction, attack_id: str):
         
-        permitted_users = ["skarpetky", "spectregray", "___bryant"]
+        permitted_users = ["skarpetky", "spectregray", "___bryant", "silentvoice._."]
         curr_attacks = self.db_ref_attacks.get()
         if not (interaction.user.name in permitted_users):
             await interaction.response.send_message("You don't have permission to delete attacks", ephemeral=True)
