@@ -117,6 +117,7 @@ class AttacksCog(commands.Cog):
             score_calculation = trade.utils.size_calc(select_1.values[0]) + trade.utils.finish_calc(select_2.values[0]) + trade.utils.color_calc(select_3.values[0]) + trade.utils.shading_calc(select_4.values[0]) + trade.utils.background_calc(select_5.values[0])
             content = f"{interaction.user.mention} has attacked {victim.mention} for {score_calculation} points!"
             final_embed = discord.Embed(title=f"{interaction.user.name}: {message}", description="", color=discord.Colour.light_embed())
+            final_embed.set_author(name="Art Fight", icon_url=interaction.guild.icon.url)
             final_embed.set_image(url="attachment://image.png")
             image_file = await image.to_file(filename="image.png")
             sent_message = await interaction.channel.send(content=content, embed=final_embed, file=image_file, view=None)
