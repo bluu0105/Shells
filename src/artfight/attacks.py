@@ -118,10 +118,13 @@ class AttacksCog(commands.Cog):
             #self.db_ref_attacks.update({0: "siblings are message ids"})
             
             score_calculation = artfight.utils.size_calc(select_1.values[0]) + artfight.utils.finish_calc(select_2.values[0]) + artfight.utils.color_calc(select_3.values[0]) + artfight.utils.shading_calc(select_4.values[0]) + artfight.utils.background_calc(select_5.values[0])
+            
             content = f"{victim.mention} you have been attacked by {interaction.user.mention}!"
             # embed_content = f"**{interaction.user.mention}** has attacked **{victim.mention}** for {score_calculation} points!"
             final_embed = discord.Embed(title="", description="", color=discord.Colour.light_embed())
             final_embed.set_author(name=f"{interaction.user.name} : {message}", icon_url=interaction.user.avatar.url)
+            final_embed.set_footer(text=f"Art Fight", icon_url=interaction.guild.icon.url)
+            
             final_embed.set_image(url="attachment://image.png")
             image_file = await image.to_file(filename="image.png")
             sent_message = await interaction.channel.send(content=content, embed=final_embed, file=image_file, view=None)
