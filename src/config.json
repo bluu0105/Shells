@@ -1,0 +1,7 @@
+{
+    "bot_config":
+        {
+            "command_prefix": "!", 
+            "description": "A bot for Paints and Shells"
+        }
+}
