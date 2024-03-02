@@ -1,6 +1,8 @@
 import discord
+from discord import app_commands
 from discord.ext import commands
-from misc.misc_views import AboutView
+from misc.about_views import AboutView, AboutEmbed
+# from misc.achievement_views import AchievementUnlockedEmbed
 from firebase_admin import db
 
 """
@@ -11,11 +13,9 @@ class MiscCog(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-    @commands.command(name="about")
-    async def about(self, interaction: discord.Interaction):
-        await interaction.send_message("hi", view=AboutView(), ephemeral=True)
-        # .response("menu", view=AboutView())
-        # await interaction.send_message("menu", view=AboutView())
+    @app_commands.command(name="help", description="Info about commands, etc.")
+    async def help(self, interaction: discord.Interaction):
+        await interaction.response.send_message(embed=AboutEmbed(), view=AboutView(), ephemeral=True)
     
 async def setup(bot):
     await bot.add_cog(MiscCog(bot))

@@ -21,8 +21,11 @@ class AttacksCog(commands.Cog):
         
     af = discord.app_commands.Group(name="af", description="art fight commands!")
      
-    @af.command(name="attack", description="attack a victim!")
-    async def attack(self, interaction: discord.Interaction, victim: discord.Member, message: str, image: discord.Attachment):
+    @af.command(name="attack", description="attack a victim in art fight!")
+    async def attack(self, interaction: discord.Interaction, 
+                     victim: discord.Member, 
+                     message: str, 
+                     image: discord.Attachment):
         #select_options -> size, finish, color, shading, background
         
         select_1 = Select(
@@ -258,7 +261,7 @@ class AttacksCog(commands.Cog):
         
         await interaction.response.send_message("", embed=embed_leaderboard, ephemeral=True)
     
-    @af.command(name="profile", description="shows a user\'s profile including points and attack info")
+    @af.command(name="profile", description="view a user\'s profile including points and attack info")
     async def profile(self, interaction: discord.Interaction, user: discord.Member):
         profile_info = ""
         user_dictionary = self.db_ref_users.get()
