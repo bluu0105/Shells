@@ -19,7 +19,8 @@ intents.presences = False
 
 all_extensions = [
     "setup",
-    "trade.attacks",
+    "artfight.attacks",
+    "general.general"
 ]
 
 class PSBot(commands.Bot):
