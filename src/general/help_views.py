@@ -4,7 +4,7 @@ about_color = 0xbbbfba
 artfight_color = 0xe35e4f
 telephone_color = 0x7ee07f
 
-class AboutSelect(discord.ui.Select):
+class HelpSelect(discord.ui.Select):
     def __init__(self):
         options=[
             discord.SelectOption(label="General Commands", emoji="⚙️", description="See commands not specifc to any game"),
@@ -18,18 +18,18 @@ class AboutSelect(discord.ui.Select):
     
     async def callback(self, interaction: discord.Interaction):
         if self.values[0] == "General Commands":
-            await interaction.response.edit_message(embed=AboutEmbed())
+            await interaction.response.edit_message(embed=HelpEmbed())
         elif self.values[0] == "Art Fight":
             await interaction.response.edit_message(embed=ArtFightEmbed())
         elif self.values[0] == "Telephone":
             await interaction.response.edit_message(embed=TelephoneEmbed())
 
-class AboutView(discord.ui.View):
+class HelpView(discord.ui.View):
     def __init__(self, *, timeout=180):
         super().__init__(timeout=timeout)
-        self.add_item(AboutSelect())
+        self.add_item(HelpSelect())
 
-class AboutEmbed(discord.Embed):
+class HelpEmbed(discord.Embed):
     def __init__(self):
         super().__init__(title="⚙️ General Commands",
                          description="To see game-specific commands, use the dropdown below.",
