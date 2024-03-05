@@ -38,7 +38,7 @@ class HelpEmbed(discord.Embed):
         self.add_field(name="👤 `/editprofile`", value="Use this to modify your profile!", inline=False)
         self.add_field(name="🏆 `/leaderboard`", value="View the activity leaderboard for all games.", inline=False)
         # self.add_field(name="🎖️ `/achievements`", value="View your achievements, or someone else's 😳.", inline=False)
-        # self.add_field(name="💬 `/feedback`", value="Send anonymous feedback or suggestions.", inline=False)
+        # self.add_field(name="💬 `/feedback`", value="Anonymously submit feedback or suggestions.", inline=False)
 
 class ArtFightEmbed(discord.Embed):
     def __init__(self):
