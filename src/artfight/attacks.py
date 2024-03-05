@@ -125,6 +125,7 @@ class AttacksCog(commands.Cog):
             sent_message = await interaction.channel.send(content=content, embed=final_embed, file=image_file, view=None)
             final_embed.set_footer(text=f"Art Fight ✦ id: {sent_message.id}")
             await sent_message.edit(embed=final_embed)
+
             attack_info = {sent_message.id: {
                            "attacker":interaction.user.id,
                            "victim":victim.id,
@@ -135,6 +136,7 @@ class AttacksCog(commands.Cog):
                            "background": select_5.values[0],
                            "points": score_calculation,
                            "message": message,
+                           "image_url": sent_message.embeds[0].image.url,
                            }}
             
             original_points_1 = 0
