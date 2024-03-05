@@ -15,6 +15,12 @@ class GeneralCog(commands.Cog):
         self.db_ref_users = db.reference("/").child("users")
         self.db_ref_attacks = db.reference("/").child("attacks")
 
+    # Collab
+    @commands.Cog.listener()
+    async def on_message(self, message):
+        if message.content != "fart club" and message.channel.id == 1214590079146922054:
+            await message.delete()
+
     @app_commands.command(name="help", description="Info about commands, etc.")
     async def help(self, interaction: discord.Interaction):
         await interaction.response.send_message(embed=HelpEmbed(), view=HelpView(), ephemeral=True)
