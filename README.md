@@ -12,7 +12,7 @@ Open for anyone to contribute to.
 
 2. Clone this repository.
 
-3. Navigate into the project directory:
+3. Navigate into the `Shells` project directory:
 
    ```bash
    cd Shells
@@ -40,12 +40,12 @@ Open for anyone to contribute to.
    pip install -r requirements.txt
    ```
 
-6. Make an environment variables file:
+6. Make an environment variables file (`.env`) You should still be in the `Shells` directory:
 
    ```bash
    touch .env
    ```
-7. Fill in the .env file with the following:
+7. Fill in the `.env` file with the following:
 
     ```bash
     DISCORD_TOKEN=your_discord_bot_token
