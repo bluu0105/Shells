@@ -47,7 +47,7 @@ class ArtFightEmbed(discord.Embed):
                          color=artfight_color)
         self.add_field(name="🖌️ `/af attack`", value="Attack a fellow member by creating art for them! You can ask them what they like, or check their `/profile`.", inline=False)
         self.add_field(name="❌ `/af delete`", value="Made an oopsie? Delete an attack. You'll need to find your attack's id for this.", inline=False)
-        self.add_field(name="🔎 `/af view`", value="View the details for a specific attack. You'll need the attack's id for this.", inline=False)
+        self.add_field(name="🔎 `/af view`", value="View the details for a specific attack using an attack's ID.", inline=False)
     
 class TelephoneEmbed(discord.Embed):
     def __init__(self):
