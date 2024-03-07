@@ -33,49 +33,51 @@ class GeneralCog(commands.Cog):
         profile_info = ""
         user_dictionary = self.db_ref_users.get()
         user_attacks = self.db_ref_attacks.get(str(user.id))
-        user_profile = db.reference("/profiles").get(str(user.id))
+        user_profile = db.reference("/profiles/" + str(user.id)).get()
         
-        if user_attacks is None and user_profile is None:
-            profile_info = "Nothing to see here :) If this is you, please use `/editprofile` to add a profile."
-        else:
-            if user_dictionary is not None:
-                users_sorted = sorted(user_dictionary.items(), key=lambda x: x[1]["points"], reverse=True)
-                rank = 1
-                for key, value in users_sorted:
-                    if value["name"] == user.name:
-                        break
-                    rank += 1
-                    
-                specified_user = user_dictionary.get(str(user.id))
+        if user_dictionary is not None:
+            users_sorted = sorted(user_dictionary.items(), key=lambda x: x[1]["points"], reverse=True)
+            rank = 1
+            for key, value in users_sorted:
+                if value["name"] == user.name:
+                    break
+                rank += 1
+                
+            specified_user = user_dictionary.get(str(user.id))
 
-                if specified_user is not None:
-                    v_points = specified_user.get("points")
-                    
-                    sent_dictionary = specified_user.get("attacks_sent")
-                    v_sent = ""
-                    if sent_dictionary == None:
-                        v_sent = "**N/A**\n"
-                    else:
-                        for message_id in sent_dictionary:
-                            message_url = f"https://discord.com/channels/{interaction.guild.id}/{interaction.channel.id}/{message_id}"
-                            v_sent += f"[{message_id}]({message_url})\n"
-                    
-                    received_dictionary = specified_user.get("attacks_received")
-                    v_received = ""
-                    if received_dictionary == None:
-                        v_received = "**N/A**\n"
-                    else:
-                        for message_id in received_dictionary:
-                            message_url = f"https://discord.com/channels/{interaction.guild.id}/{interaction.channel.id}/{message_id}"
-                            v_received += f"[{message_id}]({message_url})\n"
-                            
-            if user_profile is not None:
-                v_oclink = user_profile[0][str(user.id)]["oclink"] if "oclink" in user_profile[0][str(user.id)] else "None"
-                #v_oclink = f"[{v_oclink}]({v_oclink})"
-                v_notes = user_profile[0][str(user.id)]["notes"] if "notes" in user_profile[0][str(user.id)] else "None"
+            if specified_user is not None:
+                v_points = specified_user.get("points")
                 
-            profile_info += f"User: **<@{user.id}>**\nPoints: **{v_points}**\nRank: **{rank}**\n\nAttacks Sent:\n{v_sent}\nAttacks Received:\n{v_received}\nOC Link:\n**{v_oclink}**\n\nNotes:\n**{v_notes}**\n"
+                sent_dictionary = specified_user.get("attacks_sent")
+                v_sent = ""
+                if sent_dictionary == None:
+                    v_sent = "**N/A**\n"
+                else:
+                    for message_id in sent_dictionary:
+                        message_url = f"https://discord.com/channels/{interaction.guild.id}/{interaction.channel.id}/{message_id}"
+                        v_sent += f"[{message_id}]({message_url})\n"
                 
+                received_dictionary = specified_user.get("attacks_received")
+                v_received = ""
+                if received_dictionary == None:
+                    v_received = "**N/A**\n"
+                else:
+                    for message_id in received_dictionary:
+                        message_url = f"https://discord.com/channels/{interaction.guild.id}/{interaction.channel.id}/{message_id}"
+                        v_received += f"[{message_id}]({message_url})\n"
+
+        v_oclink, v_notes = "None", "None"         
+        if user_profile is not None:
+            v_oclink = user_profile["oclink"] if "oclink" in user_profile else "None"
+            v_notes = user_profile["notes"] if "notes" in user_profile else "None"
+            
+        profile_info += f"User: **<@{user.id}>**"
+        if user_dictionary is not None and user_attacks is not None:
+            profile_info += f"\nPoints: **{v_points}**\nRank: **{rank}**\n\nAttacks Sent:\n{v_sent}\nAttacks Received:\n{v_received}"
+        if user_profile is not None:
+            profile_info += f"\nOC Link:\n**{v_oclink}**\n\nNotes:\n**{v_notes}**\n"
+        else: 
+            profile_info += f"\nNo OC links or notes :) If this is you, please use `/editprofile` to add them."
         
         embed_profile = discord.Embed(title='', description=profile_info, color=discord.Colour.light_embed())
         # embed_profile.set_thumbnail(url=user.avatar)
@@ -90,8 +92,10 @@ class GeneralCog(commands.Cog):
         if new_oc_link == "no_changes_made" and new_notes == "no_changes_made":
             await interaction.response.send_message("You didn't pass in any profile updates.", ephemeral=True)
         else:
-            db_ref_profiles.child(str(interaction.user.id)).update({"oclink": new_oc_link})
-            db_ref_profiles.child(str(interaction.user.id)).update({"notes": new_notes})
+            if new_oc_link != "no_changes_made":
+                db_ref_profiles.child(str(interaction.user.id)).update({"oclink": new_oc_link})
+            if new_notes != "no_changes_made":
+                db_ref_profiles.child(str(interaction.user.id)).update({"notes": new_notes})
         
             await interaction.response.send_message("Links and Notes have been updated!", ephemeral=True)
         
